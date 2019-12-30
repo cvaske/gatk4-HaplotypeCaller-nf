@@ -43,6 +43,7 @@ if (params.help)
     log.info "--gatk_exec                     BIN PATH                    Full path to GATK4 executable"
     log.info "--picard_dir                    BIN DIRECTORY               Directory containing Picard Tools jar file"
     log.info "--interval_list                 INTERVAL_LIST FILE          Interval.list file For target"
+    log.info "--scatter_count                 POSITIVE_INTEGER            How many jobs the interval list is split"
     exit 1
 }
 
@@ -55,6 +56,7 @@ params.ref_fasta     = null
 params.gatk_exec     = null
 params.picard_dir    = null
 params.interval_list = null
+params.scatter_count = 10
 
 //
 // Parse Input Parameters
@@ -99,7 +101,7 @@ process SplitIntervals {
 		-R ${genome} \
 		-L ${interList} \
 		--subdivision-mode BALANCING_WITHOUT_INTERVAL_SUBDIVISION \
-		--scatter-count 10 \
+		--scatter-count ${params.scatter_count} \
 		-O scatter
 	
 	"""
@@ -111,8 +113,8 @@ process SplitIntervals {
 //
 process HaplotypeCaller {
 
-	cpus 4 // --native-pair-hmm-threads GATK HC argument is set to 4 by default
-	memory '64 GB'
+	cpus 2 // --native-pair-hmm-threads GATK HC argument is set to 4 by default
+	memory '10 GB'
 	time '12h'
 
 	tag { bamID+"-"+file(Interval) }
