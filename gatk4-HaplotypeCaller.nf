@@ -115,7 +115,6 @@ process HaplotypeCaller {
 
 	cpus 2 // --native-pair-hmm-threads GATK HC argument is set to 4 by default
 	memory '10 GB'
-	time '12h'
 
 	tag { bamID+"-"+file(Interval) }
 	
